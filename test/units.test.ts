@@ -20,6 +20,25 @@ test('time: h to s', () => {
   assert.equal(convert(1, 'h', 's').value, 3600);
 });
 
+test('angle: deg to rad', () => {
+  const { value } = convert(180, 'deg', 'rad');
+  assert.ok(Math.abs(value - Math.PI) < 1e-9);
+});
+
+test('angle: grad to deg', () => {
+  const { value } = convert(100, 'grad', 'deg');
+  assert.ok(Math.abs(value - 90) < 1e-9);
+});
+
+test('volume: gal to l', () => {
+  const { value } = convert(1, 'gal', 'l');
+  assert.ok(Math.abs(value - 3.785411784) < 1e-9);
+});
+
+test('volume: l to ml', () => {
+  assert.equal(convert(1, 'l', 'ml').value, 1000);
+});
+
 test('temperature: C to F', () => {
   assert.equal(convert(100, 'C', 'F').value, 212);
 });
@@ -56,6 +75,8 @@ test('non-finite values throw', () => {
 test('result carries the resolved dimension', () => {
   assert.equal(convert(1, 'km', 'm').dimension, 'length');
   assert.equal(convert(0, 'C', 'F').dimension, 'temperature');
+  assert.equal(convert(1, 'deg', 'rad').dimension, 'angle');
+  assert.equal(convert(1, 'l', 'ml').dimension, 'volume');
 });
 
 test('dimensionOf resolves known units and rejects unknown ones', () => {

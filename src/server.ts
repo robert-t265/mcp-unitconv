@@ -20,7 +20,8 @@ interface JsonRpcRequest {
 
 const CONVERT_TOOL = {
   name: 'convert',
-  description: 'Convert a numeric value between units of the same dimension (length, mass, time, temperature).',
+  description:
+    'Convert a numeric value between units of the same dimension (length, mass, time, temperature, angle, volume).',
   inputSchema: {
     type: 'object',
     properties: {
