@@ -112,3 +112,14 @@ rl.on('line', (line) => {
 
   handleRequest(req);
 });
+
+// Close the readline interface instead of calling process.exit(), so any
+// buffered stdout write from an in-flight response finishes before the
+// process exits on its own with an empty event loop.
+function shutdown(): void {
+  process.exitCode = 0;
+  rl.close();
+}
+
+process.once('SIGINT', shutdown);
+process.once('SIGTERM', shutdown);

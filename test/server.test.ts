@@ -60,6 +60,16 @@ class ServerHarness {
     this.sendRaw(line);
   }
 
+  kill(signal: NodeJS.Signals): void {
+    this.child.kill(signal);
+  }
+
+  waitForExit(): Promise<{ code: number | null; signal: NodeJS.Signals | null }> {
+    return new Promise((resolve) => {
+      this.child.once('exit', (code, signal) => resolve({ code, signal }));
+    });
+  }
+
   close(): void {
     this.child.kill();
   }
@@ -159,3 +169,19 @@ test('notifications (no id) get no response but do not block later requests', as
     server.close();
   }
 });
+
+for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+  test(`${signal} shuts the server down cleanly`, async () => {
+    const server = new ServerHarness();
+    try {
+      await server.request('initialize');
+      const exit = server.waitForExit();
+      server.kill(signal);
+      const { code, signal: killedBy } = await exit;
+      assert.equal(code, 0);
+      assert.equal(killedBy, null);
+    } finally {
+      server.close();
+    }
+  });
+}
